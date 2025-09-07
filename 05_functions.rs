@@ -68,6 +68,13 @@ fn main() {
 
     let x = plus_one(10);
     println!("The value of x from plus_one(10) is: {}", x);
+
+    // 练习1：
+    let dc = 68.0;
+    println!("{}°F is equal to {:.1}°C", dc, fahrenheit_to_celsius(dc));
+
+    // 练习2：
+    get_number();
 }
 
 // 一个简单的无参数、无返回值的函数
@@ -91,8 +98,21 @@ fn five() -> i32 {
 fn plus_one(x: i32) -> i32 {
     x + 1 // 同样，没有分号，这个表达式的值被返回
     // `return x + 1;` 效果相同，但不是惯用法
+    // 在rust中，返回值为当前函数中最后一个表达式的返回内容
 }
-
+// 练习1：
+fn fahrenheit_to_celsius(df: f64) -> f64 {
+    //C = (F - 32) * 5/9。
+    (df - 32.0) * 5.0 / 9.0
+    //注意，在rust中，返回值后面不能跟;分号
+    //(df - 32.0) * 5.0 / 9.0;报错
+}
+// 练习2：
+fn get_number() -> i32 {
+    let number = 42;
+    number // 问题在这里！
+    // number;报错
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

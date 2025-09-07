@@ -81,6 +81,16 @@ fn main() {
     // 如果我们对 mut 变量尝试做同样的事情，就会报错
     // let mut spaces_mut = "   ";
     // spaces_mut = spaces_mut.len(); // error[E0308]: mismatched types
+    // 练习1：
+    let mut temperature = 30;
+    println!("The temperature is {} degrees.", temperature);
+    temperature = 25;
+    println!("The temperature changed to {} degrees.", temperature);
+    // 练习2：
+    let value: &'static str = "one";
+    println!("输出{}",value);
+    let value = value.len();
+    println!("输出{}",value);
 }
 
 /*

@@ -63,7 +63,7 @@
 fn main() {
     // 1. 作用域和 Drop
     {
-        let s = String::from("scope"); // s 从此刻开始有效
+        let s: String = String::from("scope"); // s 从此刻开始有效
         println!("Inside inner scope: {}", s);
     } // 这个作用域结束，s 不再有效，内存被释放
 
@@ -83,23 +83,37 @@ fn main() {
     // 4. Copy Trait - 栈上数据
     let x = 5; // i32 实现了 Copy trait
     let y = x; // x 的值被复制给 y
-    println!("x = {}, y = {}", x, y); // x 和 y 都有效，因为 i32 是 Copy 类型
+    println!("x = {}, y = {}", x, y); // x 和 y 都有效，因为 i32 是 Copy 类型 直接存入栈的数据
 
     // 5. 函数与所有权转移
     let s = String::from("ownership"); // s 进入作用域
     takes_ownership(s);             // s 的所有权被移动到函数 takes_ownership 中
                                     // 从这里开始 s 不再有效
+    //println!("s is :{}",s);//报错：borrow of moved value: `s`
 
-    let z = 10;                     // z 进入作用域
-    makes_copy(z);                  // z 的值被复制到函数 makes_copy 中
+    let z = 10;                 // z 进入作用域
+    makes_copy(z);     // z 的值被复制到函数 makes_copy 中
                                     // z 在这里仍然有效
+    println!("z is :{}",z);
 
     let s_back = gives_ownership(); // 函数返回一个 String，所有权移动给 s_back
     println!("Got ownership back: {}", s_back);
 
     let s_given = String::from("take and give back");
     let s_received = takes_and_gives_back(s_given); // 所有权移动到函数，然后又移回来
+    //这里的流程是：
+    //1.s_given新增了堆栈内存
+    //2.将所有权移交给了takes_and_gives_back该方法
+    //3.takes_and_gives_back内部存在返回值(a_string)
+    //4.s_received来接受返回值的所有权
+    // s_g->t_a_g_b->s_r
     println!("Received back: {}", s_received);
+
+    //练习2：
+    let s1 = String::from("abcdefg");
+    let (s2,len) = calculate_length(s1);
+    println!("The length of '{}' is {}.", s2, len);
+
 } // main 作用域结束，所有仍然有效的变量（s2, s3, s4, x, y, z, s_back, s_received）被 drop
 
 fn takes_ownership(some_string: String) { // some_string 获得所有权
@@ -119,6 +133,11 @@ fn takes_and_gives_back(a_string: String) -> String {
     a_string // 接收 String 的所有权，然后又将其返回
 }
 
+// 练习2：
+fn calculate_length(s1: String) -> (String,usize){
+    let lenght = s1.len();
+    (s1,lenght)
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)
@@ -131,7 +150,8 @@ fn takes_and_gives_back(a_string: String) -> String {
  *        let a = String::from("apple");
  *        let b = a;
  *        let c = b.clone();
- *        println!("a = {}, b = {}, c = {}", a, b, c);
+ *        println!("a = {}, b = {}, c = {}", a, b, c);//这一行会报错
+ *        //原因：当a创建堆栈空间后，将所有权（b = a;）移交给了b，此时a失效，b、c正常输出，因为b和c的转移所有权是用的clone深度复制
  *    }
  *
  * 2. 计算字符串长度:

@@ -48,7 +48,6 @@
 // =====================================================================================
 // 代码示例 (Code Section)
 // =====================================================================================
-
 fn main() {
     // 1. 使用不可变引用来解决上一课的挑战
     let s1 = String::from("hello");
@@ -79,12 +78,32 @@ fn main() {
 
     // 同样，在存在可变引用的情况下，不能再创建不可变引用
     let mut s4 = String::from("race");
-    let r5 = &mut s4;
+    let _r5 = &mut s4;
     // let r6 = &s4; // error[E0502]: cannot borrow `s4` as immutable because it is also borrowed as mutable
     // println!("{}, {}", r5, r6);
 
     // 4. 悬垂引用示例 (这段代码无法通过编译)
     // let reference_to_nothing = dangle();
+
+    // 练习1：
+    let mut my_string = String::from("hello");
+    inspect(&my_string);
+    let str1 = &mut my_string;
+    println!("{}", str1);
+
+    // 练习2：
+    // 创建一个可变的 String
+    let mut str2 = String::from("Hello");
+    println!("Before calling the function: {}", str2);
+    // 调用函数，传入一个可变引用
+    let string_ref = add_suffix(&mut str2);
+    // 函数执行后：
+    // str2 本身已经被修改了。
+    //println!("After modification, original string is: {}", str2);//报错,原因如下：
+        //1.首先str2在可变借用后，将写入权限给了string_ref
+        //2.因为rust规则：只有一个可变借用可以操作写入，所以str2暂时为不可以状态，因为下面还有继续使用string_ref。
+    println!("After modification, the content is: {}", string_ref); // 使用 string_ref
+    println!("Now we can use my_string again: {}", str2);//结果一致
 }
 
 // 这个函数接收一个 String 的引用，返回其长度
@@ -97,7 +116,16 @@ fn calculate_length(s: &String) -> usize {
 fn change(some_string: &mut String) {
     some_string.push_str(", world");
 }
+// 练习1：
+fn inspect(s: &String) {
+    println!("{}", s);
+}
 
+// 练习2：
+fn add_suffix(s: &mut String) -> &String{
+    s.push_str("!");
+    s
+}
 // 这个函数尝试创建一个悬垂引用，但编译器会阻止我们
 // fn dangle() -> &String { // dangle 返回一个 String 的引用
 //     let s = String::from("dangle"); // s 是一个新的 String
@@ -119,9 +147,9 @@ fn change(some_string: &mut String) {
  *
  *    fn main_challenge() {
  *        let mut my_string = String::from("hello");
- *        let r1 = &mut my_string;
+ *        let str1 = &mut my_string;
  *        inspect(&my_string); // 错误发生在这里
- *        println!("{}", r1);
+ *        println!("{}", str1);
  *    }
  *
  * 2. 修改并返回引用:

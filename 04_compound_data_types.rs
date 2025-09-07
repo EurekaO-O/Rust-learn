@@ -1,4 +1,3 @@
-
 // 04_compound_data_types.rs
 // 核心内容：介绍复合类型：元组（Tuple）和数组（Array）的创建、访问和使用场景。
 
@@ -72,24 +71,40 @@ fn main() {
     println!("Accessing directly: Name is {}, Age is {}", person_name, person_age);
 
     // 2. 数组 (Array)
-    // 创建一个包含5个i32类型整数的数组
-    let numbers: [i32; 5];
-    println!("The first number is: {}", numbers);
-    println!("The third number is: {}", numbers);
+    // 必须在声明时或首次使用前为数组赋值，否则编译器会报错。
+    let numbers: [i32; 5] = [10, 20, 30, 40, 50];
+
+    // 使用索引访问数组的元素（索引从0开始）
+    println!("The first number is: {}", numbers[0]);
+    println!("The third number is: {}", numbers[2]);
 
     // 创建一个包含月份的数组
     let months = ["January", "February", "March", "April", "May", "June",
                   "July", "August", "September", "October", "November", "December"];
-    println!("The second month is: {}", months);
+
+    // 访问数组的特定元素。第二个月的索引是 1。
+    println!("The second month is: {}", months[1]);
 
     // 使用快捷方式初始化一个包含8个0的数组
     let byte_buffer = [0; 8];
-    println!("The byte buffer's 5th element is: {}", byte_buffer);
+    println!("The byte buffer's 5th element is: {}", byte_buffer[4]);
+    // 使用 `{:?}` 打印整个调试信息
+    println!("The entire byte buffer (for debugging): {:?}", byte_buffer);
 
     // 访问越界索引会导致 panic
     // 下面这行代码如果取消注释，程序运行时会崩溃
     // let invalid_element = numbers;
-    // println!("This will not be printed: {}", invalid_element);
+    // println!("This will not be printed: {}", invalid_element[5]);//index out of bounds: the length is 5 but the index is 5
+    
+    // 练习1：
+    let rgb_color: (u8,u8,u8) = (255,100,50);
+    let (red,green,blue) = rgb_color;
+    println!("red:{},green:{},blue:{}",red,green,blue);
+    
+    // 练习2：
+    let costs: [f64;5]=[44.1,39.8,38.5,40.9,36.8];
+    let result = costs[0]+costs[1]+costs[2]+costs[3]+costs[4];
+    println!("total costs:{}",result);
 }
 
 /*
@@ -100,6 +115,7 @@ fn main() {
  * 1. 创建并解构元组:
  *    创建一个名为 `rgb_color` 的元组，用于表示一个RGB颜色。它应该包含三个 `u8` 类型的值，
  *    分别代表红、绿、蓝。例如 `(255, 100, 50)`。
+ *    然后，使用解构的方式将这三个值分别赋给 `red`, `green`, `blue` 三个变量，并打印它们。
  *
  * 2. 访问数组并计算总和:
  *    创建一个包含5个浮点数（`f64`）的数组，代表一周中5个工作日的开销。

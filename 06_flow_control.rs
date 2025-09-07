@@ -80,7 +80,7 @@ fn main() {
     println!("LIFTOFF!!!");
 
     // 4. for 循环
-    let a; // **修正点**: 初始化数组
+    let a = [1,2,3,4]; // **修正点**: 初始化数组
 
     // 使用 for 遍历数组元素，更安全简洁
     for element in a {
@@ -94,8 +94,72 @@ fn main() {
         println!("{}!", number);
     }
     println!("LIFTOFF AGAIN!!!");
+
+    // 练习1：
+    fibonacci_sequence(10);
+
+    // 练习2：
+    print_christmas_lyrics();
+}
+// 练习1：
+fn fibonacci_sequence(n: u32){
+
+    if n <= 0{
+        println!("请输入一个大于 0 的数");
+    }
+
+    let mut a = 0;
+    let mut b = 1;
+    for _ in 0..n{
+        print!("{} ",a);
+        let next = a + b;
+        a = b;
+        b = next;
+    }
+    println!()
 }
 
+// 练习2：
+fn print_christmas_lyrics() {
+    // 礼物数组，索引 0 对应第一天，索引 1 对应第二天，以此类推
+    let gifts = [
+        "A partridge in a pear tree",
+        "Two turtle doves",
+        "Three French hens",
+        "Four calling birds",
+        "Five golden rings",
+        "Six geese a-laying",
+        "Seven swans a-swimming",
+        "Eight maids a-milking",
+        "Nine ladies dancing",
+        "Ten lords a-leaping",
+        "Eleven pipers piping",
+        "Twelve drummers drumming",
+    ];
+    // 天数数组，用于打印 "first", "second" 等
+    let days = [
+        "first", "second", "third", "fourth", "fifth", "sixth",
+        "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+    ];
+    println!("--- The Twelve Days of Christmas ---");
+    // 外层循环：遍历每一天 (从 0 到 11 对应第一到第十二天)
+    for day_index in 0..12 {
+        println!("\n[Verse {}]", day_index + 1);
+        println!("On the {} day of Christmas,", days[day_index]);
+        println!("My true love sent to me");
+        // 内层循环：倒序打印从当天到第一天的所有礼物
+        // (day_index..=0).rev() 是错误的，应该是 (0..=day_index).rev()
+        for gift_index in (0..=day_index).rev() {
+            // 如果是第一天 (day_index > 0) 并且是最后一个礼物 (gift_index == 0)，
+            // 在礼物前加上 "And"
+            if day_index > 0 && gift_index == 0 {
+                print!("And ");
+            }
+            
+            println!("{}", gifts[gift_index]);
+        }
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

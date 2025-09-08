@@ -111,8 +111,39 @@ fn main() {
     let slice = &hello[0..4]; // 获取前两个字符 "Зд"
     println!("Slice [0..4] is: {}", slice);
     // let invalid_slice = &hello[0..1]; // 这会导致 panic!
+
+    // 练习1：
+    println!("{}",reverse_str("abc"));
+
+    // 练习2：
+    println!("{}",check_str("acca"))
 }
 
+fn reverse_str(s:&str) -> String{
+    s.chars().rev().collect::<String>()
+}
+fn check_str(s: &str) -> bool{
+    // 1.清理字符串（大小写和空格）
+    // `s.chars()`: 将字符串分解成一个字符的迭代器。
+    // `.filter(|c| c.is_alphanumeric())`: 过滤迭代器，只保留字母和数字的字符。
+    // `.map(|c| c.to_ascii_lowercase())`: 将每个通过过滤的字符转换为小写。
+    // `.collect()`: 将处理后的字符收集起来，组合成一个新的 String。
+    let clearStr: String = s.chars().filter(|c| c.is_alphabetic())
+        .filter(|c|c.is_alphabetic())
+        .map(|c|c.to_ascii_lowercase())
+        .collect();
+
+    if clearStr.is_empty(){
+        return true;
+    }
+
+    // 2.创建反转字符串
+    let backward: String = clearStr.chars().rev().collect();
+
+    // 3.对比
+    clearStr == backward
+    
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

@@ -134,12 +134,42 @@ fn main() {
     //     Some(max) => println!("The maximum is configured to be {}", max),
     //     _ => (),
     // }
+
+    // 练习2：
+    let some_string: Option<String> = Some(String::from("testSome"));
+    // 匹配some的形式
+    if let Some(s) = some_string {
+        println!("\t字符串的长度是: {}", s.len());
+    }
+
+    // 匹配None
+    let none_string: Option<String> = None;
+    // 匹配None的形式
+    if let Some(s) = none_string{
+        println!("匹配失败，不会被打印")
+    }else {
+        println!("\t没有匹配，因为值为None")
+    }
+    println!("\n-----------------------------------\n");
 }
 
 fn add_fancy_hat() {}
 fn remove_fancy_hat() {}
 fn reroll() {}
 
+// 练习1：
+enum TrafficLight{
+    Red,
+    Yellow,
+    Green
+}
+fn get_duration(t1:TrafficLight) -> u8{
+    match t1 {
+        TrafficLight::Red => 60,
+        TrafficLight::Yellow => 3,
+        TrafficLight::Green => 45
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

@@ -138,6 +138,27 @@ fn main() {
     println!("The point is at ({}, {})", origin.0, origin.1);
 }
 
+
+// 练习1：
+struct Rectangle{
+    width: u32,
+    height: u32
+}
+impl Rectangle {
+
+    // 练习2：
+    fn area(&self) -> u32{
+        self.width * self.height
+    }
+    fn can_hold(&self,r1:Rectangle) -> bool{
+        self.height >= r1.height && self.width >= r1.width
+    }
+
+    // 练习3：
+    fn square(size: u32)->Rectangle{
+        Rectangle { width: (size), height: (size) }
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

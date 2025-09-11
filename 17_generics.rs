@@ -59,30 +59,27 @@
 
 // 2. 在函数中使用泛型，并带有 Trait 约束
 // 这个函数可以找到任何实现了 PartialOrd (可比较) 和 Copy (可复制) trait 的类型的切片中的最大值
-fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
-    let mut largest = list;
-    for &item in list {
+use std::fmt::Display;
+// 修正后的泛型函数，返回一个引用，所以不需要 Copy trait
+fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut largest = &list[0];
+    for item in list.iter() {
         if item > largest {
             largest = item;
         }
     }
     largest
 }
-
-// 4. 在结构体中使用泛型
+// 泛型结构体 Point 
 struct Point<T, U> {
     x: T,
     y: U,
 }
-
-// 6. 在方法定义中使用泛型
+// Point 的方法实现 
 impl<T, U> Point<T, U> {
-    // 这个方法适用于任何 Point<T, U>
     fn x(&self) -> &T {
         &self.x
     }
-
-    // 这个方法会消耗 Point，并返回一个新的、包含不同类型的 Point
     fn mixup<V, W>(self, other: Point<V, W>) -> Point<T, W> {
         Point {
             x: self.x,
@@ -90,7 +87,6 @@ impl<T, U> Point<T, U> {
         }
     }
 }
-
 // 只为 Point<f32, f32> 实现的方法
 impl Point<f32, f32> {
     fn distance_from_origin(&self) -> f32 {
@@ -98,30 +94,82 @@ impl Point<f32, f32> {
     }
 }
 
+// 练习1：
+struct Pair<T> {
+    first: T,
+    second: T,
+}
+impl<T> Pair<T> {
+    fn new(first: T, second: T) -> Self {
+        Self { first, second }
+    }
+}
+// 只为 T 实现了 Display 和 PartialOrd 的 Pair<T> 实现 cmp_display
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.first >= self.second {
+            println!("较大的值是: {}", self.first);
+        } else {
+            println!("较大的值是: {}", self.second);
+        }
+    }
+}
 fn main() {
-    // 使用泛型函数 largest
-    let number_list = vec!;
+    // 1. 使用泛型函数 largest
+    let number_list = vec![34, 50, 25, 100, 65];
     let result = largest(&number_list);
     println!("The largest number is {}", result);
-
-    let char_list = vec!;
+    let char_list = vec!['y', 'm', 'c', 'a'];
     let result = largest(&char_list);
-    println!("The largest char is {}", result);
-
-    // 使用泛型结构体 Point
+    println!("The largest char is '{}'", result);
+    println!();
+    // 2. 使用泛型结构体 Point
     let integer_point = Point { x: 5, y: 10 };
     let float_point = Point { x: 1.0, y: 4.0 };
-    let mixed_point = Point { x: 5, y: 4.0 }; // T 是 i32, U 是 f64
-
     println!("integer_point.x = {}", integer_point.x());
     println!("float_point distance from origin: {}", float_point.distance_from_origin());
-    // 下面这行会报错，因为 distance_from_origin 只为 Point<f32, f32> 定义
-    // println!("integer_point distance: {}", integer_point.distance_from_origin());
-
     let p3 = integer_point.mixup(float_point);
     println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+    println!();
+
+    // 3. 使用你的 Pair 结构体
+    let pair_of_numbers = Pair::new(10, 20);
+    println!("正在比较数字...");
+    pair_of_numbers.cmp_display(); 
+    
+    println!();
+    let pair_of_strings = Pair::new(String::from("rust"), String::from("go"));
+    println!("正在比较字符串...");
+    pair_of_strings.cmp_display(); 
+
+
+    // 练习2：
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    // 使用闭包过滤出所有偶数
+    let even_numbers = filter(&numbers, |&x| x % 2 == 0);
+    println!("偶数是: {:?}", even_numbers); // 输出: [2, 4, 6, 8, 10]
+    let strings = vec!["hello", "world", "rust", "is", "awesome"];
+    // 使用闭包过滤出长度大于4的字符串
+    let long_strings = filter(&strings, |s| s.len() > 4);
+    println!("长字符串是: {:?}", long_strings); // 输出: ["hello", "world", "awesome"]
 }
 
+// 练习2：
+fn filter<T, F>(slice: &[T], predicate: F) -> Vec<T>
+where
+    T: Clone,
+    F: Fn(&T) -> bool,
+{
+    let mut result = Vec::new(); // 1. 创建空 Vec
+    for item in slice { // 2. 遍历切片
+        if predicate(item) { // 3. 调用闭包判断
+            // 4. 如果为 true
+            result.push(item.clone()); // 5. 克隆并放入结果
+        }
+    }
+    result // 6. 返回结果
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

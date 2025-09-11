@@ -157,7 +157,7 @@ fn main() {
  *    - 再次确认程序可以正常工作。这个练习能帮助你理解多层级的文件组织方式。
  * 这个练习需要自己做，主要是关于包管理的，代码无法呈现，详情看https://github.com/EurekaO-O/Rust-learn，第14小节的学习
  */
-// 最终的main.rs code:
+// 最终的main.rs code(只需要复制然后测试能不能跑通):
 // 练习1&练习2：
 // mod front_of_house;
 // use crate::front_of_house::hosting::add_to_waitlist;

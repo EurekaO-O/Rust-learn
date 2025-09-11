@@ -57,36 +57,49 @@
 
 use std::fs::File;
 use std::io::{self, Read};
+use std::error::Error;
+// 练习2：
+fn main() -> Result<(), Box<dyn Error>> {
+    // // 2. 处理 Result
+    // let f = File::open("hello.txt");
 
-fn main() {
-    // 2. 处理 Result
-    let f = File::open("hello.txt");
-
-    let f = match f {
-        Ok(file) => file,
-        Err(error) => {
-            // 使用 match 来处理不同的错误类型
-            match error.kind() {
-                std::io::ErrorKind::NotFound => match File::create("hello.txt") {
-                    Ok(fc) => fc,
-                    Err(e) => panic!("Problem creating the file: {:?}", e),
-                },
-                other_error => {
-                    panic!("Problem opening the file: {:?}", other_error);
-                }
-            }
-        }
-    };
+    // let f = match f {
+    //     Ok(file) => file,
+    //     Err(error) => {
+    //         // 使用 match 来处理不同的错误类型
+    //         match error.kind() {
+    //             std::io::ErrorKind::NotFound => match File::create("hello.txt") {
+    //                 Ok(fc) => fc,
+    //                 Err(e) => panic!("Problem creating the file: {:?}", e),
+    //             },
+    //             other_error => {
+    //                 panic!("Problem opening the file: {:?}", other_error);
+    //             }
+    //         }
+    //     }
+    // };
 
     // 使用 unwrap() 和 expect()
     // let f_unwrap = File::open("hello.txt").unwrap(); // 如果文件不存在会 panic
     // let f_expect = File::open("hello.txt").expect("Failed to open hello.txt"); // 提供自定义 panic 消息
 
     // 3. 演示传播错误
-    match read_username_from_file() {
-        Ok(username) => println!("Username from file: {}", username),
-        Err(e) => println!("Error reading username: {}", e),
+    // match read_username_from_file() {
+    //     Ok(username) => println!("Username from file: {}", username),
+    //     Err(e) => println!("Error reading username: {}", e),
+    // }
+
+    // 练习1:
+    match parse_positive_integer("100") {
+        Ok(number) => println!("  => 成功! 解析出的正整数是: {}", number),
+        Err(e) => println!("  => 失败! 错误信息是: {}", e),
     }
+
+    // 练习2：
+    read_username_from_file ()?;
+    Ok(())
+
+    
 }
 
 // 这是一个返回 Result 的函数
@@ -110,6 +123,28 @@ fn read_username_from_file_shortest() -> Result<String, io::Error> {
     std::fs::read_to_string("username.txt")
 }
 
+// 练习1：
+fn parse_positive_integer(s :&str) -> Result<i32, String> {
+    // 1.调用parse()然后用match处理返回的Result
+    match s.parse::<i32>() {
+        // 2.如果解析成功进入OK分支，直接返回数字
+        Ok(num) => {
+            // 3. 检查数字是否为正数
+            if num > 0 {
+                // 4. 如果是正数，返回一个包裹着 num 的 Ok
+                Ok(num)
+            } else {
+                // 5. 如果不是正数，返回一个包含错误信息的 Err
+                Err(format!("解析成功，但数字 '{}' 不是正数。", num))
+            }
+        }
+        // 6. 如果解析失败，进入 Err 分支
+        Err(_) => {
+            // 7. 返回一个包含通用错误信息的 Err
+            Err(format!("解析失败：'{}' 不是一个有效的整数。", s))
+        }
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

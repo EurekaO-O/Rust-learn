@@ -51,9 +51,8 @@
 // 代码示例 (Code Section)
 // =====================================================================================
 
-// 1. 需要手动导入 HashMap
 use std::collections::HashMap;
-
+use std::io;//导入需要用户输入的包
 fn main() {
     // 创建一个新的 HashMap，键是 String，值是 i32
     let mut scores = HashMap::new();
@@ -109,6 +108,97 @@ fn main() {
     }
     println!("\nWord counts: {:?}", word_counts);
 
+    // 练习1：
+    // 创建一个新的、可变的 HashMap。
+    // Key 的类型是 String（部门名），Value 的类型是 Vec<String>（该部门的员工列表）
+    let mut departments: HashMap<String,Vec<String>> = HashMap::new();
+    println!("Welcome to Company System!");
+    println!("plz enter order like (Add xxx to xxx,List xxx,List All,Quit)");
+    
+    loop{
+
+        // 创建一个可变的空字符串，用来存放用户输入的内容
+        let mut input = String::new();
+        // 读取一行用户输入数据
+        // &mut input 表示我们把 input 的可变引用传给 read_line，这样它就能修改 input 的内容
+        // .expect() 是一个简单的错误处理方式，如果读取失败，程序会崩溃并显示后面的消息
+        io::stdin().read_line(&mut input).expect("读取用户输入失败");
+
+        // .trim() 会去掉输入字符串首尾的空白字符（比如换行符）
+        // .split_whitespace() 会用空白字符（空格、制表符等）把字符串分割成一个一个的单词
+        // .collect() 把这些单词收集到一个 Vec<&str> 类型的动态数组中
+        let words: Vec<&str> =  input.trim().split_whitespace().collect();
+
+        // 使用 match 语句来解析用户输入的命令
+        // 这是 Rust 中非常强大和常见的模式匹配功能
+        match words.as_slice(){
+            // 模式1：匹配 "Add <xxx> to <xxx>" 格式的命令
+            ["Add",name,"to",department] => {
+                println!("正在添加{}到{}部门...",name,department);
+
+                // 处理添加逻辑
+                // 1. .entry(department.to_string()): 检查 'department' 这个键是否存在。
+                //    .to_string() 是因为 department 是 &str 类型，而我们的 key 是 String 类型。
+                // 2. .or_insert(Vec::new()): 如果键不存在，就插入一个新的空 Vec 作为值。
+                // 3. 无论键是本来就存在还是刚刚插入的，.entry().or_insert() 都会返回一个指向 Vec 的可变引用。
+                // 4. .push(name.to_string()): 最后，调用 Vec 的 push 方法，把员工名字加进去。
+                departments.entry(department.to_string()).or_insert(Vec::new()).push(name.to_string());
+                println!("添加成功！")
+            }
+        
+            // 模式三：匹配 "List All" 命令
+            ["List","All"] => {
+                println!("公司所有部门及员工列表：");
+                // 为了保证每次输出的顺序一致，我们先收集所有的部门名并排序
+                let mut sorted_departments: Vec<_> = departments.keys().collect();
+                sorted_departments.sort();
+                // 遍历
+                for department in sorted_departments {
+                    // departments[department] 是获取部门对应员工列表的简写
+                    // 这里我们确定 key 肯定存在，所以可以直接用
+                    let mut employees = departments[department].clone();
+                    employees.sort();
+                    println!("\n ## {} ##",department);
+                    for employee in employees{
+                        println!("- {}",employee);
+                    }
+                }
+            }
+            
+            // 模式二：匹配 "List <xxx>" 格式的命令
+            ["List",department] => {
+                println!("{}部门的员工列表:",department);
+
+                // 查询方法.get()
+                match departments.get(*department){
+                    // Some(employees) 表示我们成功找到了部门，employees 是对员工列表 Vec 的引用
+                    Some(employees) => {
+                        // 创建一个克隆，因为我们不想直接修改原始数据，只是为了排序打印
+                        let mut sorted_employees = employees.clone();
+                        // 对员工字母排序
+                        sorted_employees.sort();
+                        // 遍历
+                        for employee in sorted_employees {
+                            println!("- {}",employee);
+                        }
+                    }
+                    None => {
+                        println!("未找到'{}'部门",department);
+                    }
+                }
+            }
+
+            // 模式四：匹配 "Quit" 命令
+            ["Quit"] => {
+                println!("Thanks,Bye!");
+                break;
+            }
+            // 默认模式：如果用户输入的命令不匹配以上任何一种格式
+            _ => {
+                println!("无效命令。有效格式: 'Add <name> to <department>', 'List <department>', 'List All', 'Quit'");
+            }
+        }
+    }
 }
 
 /*

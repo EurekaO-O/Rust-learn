@@ -145,6 +145,7 @@ fn main() {
     screen.run();
 }
 
+// 练习1：
 pub trait Drawable {
     fn draw(&self);
 }

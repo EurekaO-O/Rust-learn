@@ -59,72 +59,60 @@
 // 代码示例 (Code Section)
 // =====================================================================================
 
+use std::path::Component;
+
 // 1. 定义一个 Trait
 pub trait Summary {
-    // 必须实现的方法
     fn summarize_author(&self) -> String;
-
-    // 带有默认实现的方法
     fn summarize(&self) -> String {
         format!("(Read more from {}...)", self.summarize_author())
     }
 }
-
 // 定义两个不同的结构体
 #[derive(Debug)]
 pub struct NewsArticle {
     pub headline: String,
     pub author: String,
 }
-
 #[derive(Debug)]
 pub struct Tweet {
     pub username: String,
     pub content: String,
 }
-
 // 2. 为 NewsArticle 实现 Summary Trait
 impl Summary for NewsArticle {
     fn summarize_author(&self) -> String {
         format!("@{}", self.author)
     }
-    // summarize 方法使用默认实现
 }
-
 // 2. 为 Tweet 实现 Summary Trait
 impl Summary for Tweet {
     fn summarize_author(&self) -> String {
         format!("@{}", self.username)
     }
-
-    // 重写 summarize 的默认实现
     fn summarize(&self) -> String {
         format!("{}: {}", self.username, self.content)
     }
 }
-
 // 3. Trait 作为参数
-// 这个函数可以接受任何实现了 Summary trait 的类型的引用
 pub fn notify(item: &impl Summary) {
     println!("Breaking news! {}", item.summarize());
 }
-
-// 4. 返回实现了 Trait 的类型
-fn returns_summarizable(switch: bool) -> impl Summary {
+// 4. 返回实现了 Trait 的类型 
+// 注意返回类型从 "impl Summary" 变更为 "Box<dyn Summary>"
+fn returns_summarizable(switch: bool) -> Box<dyn Summary> {
     if switch {
-        NewsArticle {
+        // 使用 Box::new() 将实例分配在堆上，并返回一个 trait 对象
+        Box::new(NewsArticle {
             headline: String::from("Penguins win the Stanley Cup Championship!"),
             author: String::from("Iceburgh"),
-        }
+        })
     } else {
-        Tweet {
+        Box::new(Tweet {
             username: String::from("horse_ebooks"),
             content: String::from("of course, as you probably already know, people"),
-        }
+        })
     }
-    // 注意：虽然看起来返回了不同类型，但在 Rust 1.75 及以后版本，
-    // 编译器可以推断出一个统一的匿名类型，只要所有分支返回的类型都实现了该 trait。
-    // 在旧版本中，这需要更复杂的技巧（如 Box<dyn Trait>）。
 }
 
 fn main() {
@@ -148,8 +136,37 @@ fn main() {
     // 使用返回 impl Trait 的函数
     let summary = returns_summarizable(true);
     println!("\nReturned summary: {}", summary.summarize());
+
+    let screen = Screen {
+        components: vec![
+            Box::new(Button {}),
+        ],
+    };
+    screen.run();
 }
 
+pub trait Drawable {
+    fn draw(&self);
+}
+struct Button{
+}
+struct Screen{
+    pub components: Vec<Box<dyn Drawable>>,
+}
+
+impl Drawable for Button{
+    fn draw(&self) {
+        println!("Drawing a button.");
+    }
+}
+
+impl Screen {
+    pub fn run(&self){
+        for component in self.components.iter() {
+            component.draw();
+        }
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)

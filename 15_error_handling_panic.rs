@@ -60,21 +60,33 @@ fn main() {
 
     // 2. 由代码错误引起的 panic
     // 这是一个非常常见的 panic 场景：访问数组越界。
-    let v = vec!;
-    // v 只有3个元素，索引是 0, 1, 2。访问索引 99 会导致 panic。
+    let v: Vec<i32> = vec![1,2,3];
+
+    // 练习1：
+    //println!("{}",v[5]);//index out of bounds: the len is 3 but the index is 5
+    // v 只有3个元素，索引是 0, 1, 2。访问索引 5 会导致 panic。
     // 注意：这个 panic 是由 `Vec` 的索引实现 `[]` 触发的。
     // v;
 
     println!("This line will never be reached if the panic occurs.");
-}
 
+    // 练习2：
+    //println!("{}",divide(8, 0));// division by zero
+}
+fn divide(a :i32,b :i32)->i32{
+    if b == 0 {
+        panic!("division by zero");
+    }else {
+        a / b
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)
  * =====================================================================================
  *
  * 1. 探索 `RUST_BACKTRACE`:
- *    - 取消上面 `v[99]` 那行代码的注释。
+ *    - 取消上面 `v[5]` 那行代码的注释。
  *    - 在你的终端中，运行 `cargo run`，观察默认的 panic 输出。
  *    - 然后，运行 `RUST_BACKTRACE=1 cargo run` (在 PowerShell 中可能是 `$env:RUST_BACKTRACE=1; cargo run`)。
  *    - 比较两次输出的不同，看看详细的回溯信息能为你提供多少关于错误来源的线索。

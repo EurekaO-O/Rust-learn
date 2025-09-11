@@ -155,5 +155,66 @@ fn main() {
  *      `src/front_of_house/hosting.rs` 文件中。
  *    - 你需要在 `src/front_of_house.rs` 中使用 `pub mod hosting;` 来声明它。
  *    - 再次确认程序可以正常工作。这个练习能帮助你理解多层级的文件组织方式。
- *
+ * 这个练习需要自己做，主要是关于包管理的，代码无法呈现，详情看https://github.com/EurekaO-O/Rust-learn，第14小节的学习
  */
+// 最终的main.rs code:
+// 练习1&练习2：
+// mod front_of_house;
+// use crate::front_of_house::hosting::add_to_waitlist;
+// // 也可以使用相对路径 `use self::front_of_house::hosting::add_to_waitlist;`
+
+// fn eat_at_restaurant() {
+//     // 1. 使用绝对路径调用
+//     crate::front_of_house::hosting::add_to_waitlist();
+
+//     // 2. 使用相对路径调用
+//     front_of_house::hosting::add_to_waitlist();
+
+//     // 3. 因为我们上面 `use` 了，所以可以直接调用
+//     add_to_waitlist();
+// }
+
+// // --- 另一个例子：结构体和枚举的隐私 ---
+// mod back_of_house {
+//     // 结构体本身是 pub
+//     pub struct Breakfast {
+//         // 字段也必须是 pub 才能在外部访问
+//         pub toast: String,
+//         seasonal_fruit: String, // 这个字段是私有的
+//     }
+
+//     impl Breakfast {
+//         // 我们需要一个公有的关联函数来创建实例，因为 `seasonal_fruit` 是私有的
+//         pub fn summer(toast: &str) -> Breakfast {
+//             Breakfast {
+//                 toast: String::from(toast),
+//                 seasonal_fruit: String::from("peaches"),
+//             }
+//         }
+//     }
+
+//     // 如果枚举是 pub，它的所有变体都是 pub
+//     pub enum Appetizer {
+//         Soup,
+//         Salad,
+//     }
+// }
+
+// fn order_food() {
+//     // 实例化 back_of_house::Breakfast
+//     let mut meal = back_of_house::Breakfast::summer("Rye");
+//     // 可以访问公有字段
+//     meal.toast = String::from("Wheat");
+//     println!("I'd like {} toast please", meal.toast);
+
+//     // 不能访问私有字段
+//     // meal.seasonal_fruit = String::from("blueberries"); // 报错
+
+//     let order1 = back_of_house::Appetizer::Soup;
+//     let order2 = back_of_house::Appetizer::Salad;
+// }
+
+// fn main() {
+//     eat_at_restaurant();
+//     order_food();
+// }

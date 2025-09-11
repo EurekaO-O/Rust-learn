@@ -155,7 +155,7 @@ struct Rectangle{
     width: u32,
     height: u32
 }
-// 18小结练习2的实现
+// 18_Traits练习2的实现
 impl fmt::Display for Rectangle{
     // 方法签名完全匹配 trait 定义
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

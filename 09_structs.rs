@@ -136,6 +136,17 @@ fn main() {
     let origin = Point(0.0, 0.0);
     println!("The color is RGB({}, {}, {})", black.0, black.1, black.2);
     println!("The point is at ({}, {})", origin.0, origin.1);
+
+    let rect = Rectangle {
+        width: 30,
+        height: 50,
+    };
+    // 使用 {} 占位符，它会调用我们实现的 Display trait
+    println!("Here is the rectangle: {}", rect);
+    // 也可以通过 .to_string() 方法将它转换为字符串，
+    // 因为所有实现了 Display 的类型都会自动获得 ToString trait。
+    let s = rect.to_string();
+    println!("The rectangle as a string: {}", s);
 }
 
 
@@ -143,6 +154,16 @@ fn main() {
 struct Rectangle{
     width: u32,
     height: u32
+}
+// 18小结练习2的实现
+impl fmt::Display for Rectangle{
+    // 方法签名完全匹配 trait 定义
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // 使用 write! 宏来将格式化后的字符串写入到 f (formatter) 中。
+        // 这个宏的用法和 println! 非常相似。
+        // 它返回一个 fmt::Result，如果写入成功，则为 Ok(())，如果失败则为 Err。
+        write!(f, "Rectangle (width: {}, height: {})", self.width, self.height)
+    }
 }
 impl Rectangle {
 

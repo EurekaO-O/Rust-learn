@@ -117,8 +117,67 @@ fn main() {
     // 6. 静态生命周期
     let s: &'static str = "I have a static lifetime.";
     println!("{}", s);
-}
 
+    // 练习1：
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+    let result = longest_with_an_announcement(string1.as_str(), string2, "Today's longest string");
+    println!("The longest string is {}", result);
+
+    // 练习2：
+    // 创建一个拥有自己数据所有权的 String
+    let my_string = String::from("hello world of rust");
+    // 创建 Text 实例，它的 content 字段借用了 my_string 的数据
+    let text_instance = Text {
+        content: my_string.as_str(),
+    };
+    // 调用方法
+    let first = text_instance.first_word();
+    // 打印结果
+    println!("The original content is: '{}'", text_instance.content);
+    println!("The first word is: '{}'", first);
+}
+// 练习1：
+use std::fmt::Display;
+fn longest_with_an_announcement<'a, T>(
+    x: &'a str,
+    y: &'a str,
+    ann: T,
+) -> &'a str
+where
+    T: Display,
+{
+    println!("Announcement! {}", ann);
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+// 练习2：
+// 1. 定义结构体 Text，它包含一个生命周期为 'a 的字符串切片引用
+struct Text<'a> {
+    content: &'a str,
+}
+// 2. 为 Text 实现方法
+impl<'a> Text<'a> {
+    // 方法返回一个字符串切片，它的生命周期也是 'a
+    // &self 的生命周期是独立的，但因为返回值来源于 self.content，
+    // 所以返回值的生命周期必须是 'a。
+    fn first_word(&self) -> &'a str {
+        // 将内容按空格分割
+        let bytes = self.content.as_bytes();
+        // 遍历字节，找到第一个空格
+        for (i, &item) in bytes.iter().enumerate() {
+            if item == b' ' {
+                // 返回从开头到第一个空格的切片
+                return &self.content[0..i];
+            }
+        }
+        // 如果没有空格，整个内容就是第一个单词
+        self.content
+    }
+}
 /*
  * =====================================================================================
  * 练习挑战 (Challenge Section)
